@@ -25,3 +25,5 @@ Check if text include specific keyword
 ```
 $ ruby main.ruby test.png keyword
 ```
+
+![](readme.gif)
