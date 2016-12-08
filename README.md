@@ -27,3 +27,7 @@ $ ruby main.ruby test.png keyword
 ```
 
 ![](readme.gif)
+
+## License
+
+[Beer-Ware License](https://github.com/PeterTeng/GoogleOCR/blob/master/LICENSE.txt)
