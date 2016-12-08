@@ -13,6 +13,7 @@ vision = Vision::VisionService.new
 vision.key = ENV['GOOGLE_PRIVATE_KEY']
 
 filename = ARGV[0]
+keyword = ARGV[1]
 
 request = Google::Apis::VisionV1::BatchAnnotateImagesRequest.new(
   requests: [
@@ -22,7 +23,7 @@ request = Google::Apis::VisionV1::BatchAnnotateImagesRequest.new(
       },
       features: [
         {
-          type: "TEXT_DETECTION" ,
+          type: "TEXT_DETECTION",
           maxResults: 1
         }
       ]
@@ -31,9 +32,15 @@ request = Google::Apis::VisionV1::BatchAnnotateImagesRequest.new(
 )
 
 vision.annotate_image(request) do |result, err |
-  unless err  then
+  unless err then
     result.responses.each do | res |
-      puts res.text_annotations[0].description
+      detected_text = res.text_annotations[0].description
+      puts "\nText detected in #{filename} :"
+      puts detected_text
+      puts "\nTotal text count = #{detected_text.length}"
+      if keyword
+        puts "Text includes >> #{keyword}" if detected_text.include? keyword
+      end
     end
   else
     puts err
