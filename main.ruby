@@ -12,43 +12,54 @@ vision = Vision::VisionService.new
 # NOTE(peter) - Please add your api key in .env file
 vision.key = ENV['GOOGLE_PRIVATE_KEY']
 
-filename = ARGV[0]
-keyword = ARGV[1]
+@filename = ARGV[0]
+@keyword = ARGV[1]
 
-if filename
-  request = Google::Apis::VisionV1::BatchAnnotateImagesRequest.new(
+def filename_exist?
+  if @filename
+    true
+  else
+    puts "You need to provide a image file"
+    puts "For example: "
+    puts "ruby main.ruby test.png"
+    false
+  end
+end
+
+def request_with_type_and_filename(type, filename)
+  Google::Apis::VisionV1::BatchAnnotateImagesRequest.new(
     requests: [
       {
         image:{
-          content: File.read(filename)
+          content: File.read(@filename)
         },
         features: [
           {
-            type: "TEXT_DETECTION",
+            type: "#{type}",
             maxResults: 1
           }
         ]
       }
     ]
   )
+end
+
+if filename_exist?
+  request = request_with_type_and_filename("TEXT_DETECTION", @filename)
 
   vision.annotate_image(request) do |result, err |
     unless err then
       result.responses.each do | res |
         detected_text = res.text_annotations[0].description
-        puts "\nText detected in #{filename} :"
+        puts "\nText detected in #{@filename} :"
         puts detected_text
         puts "\nTotal text count = #{detected_text.length}"
-        if keyword
-          puts "Text includes >> #{keyword}" if detected_text.include? keyword
+        if @keyword
+          puts "Text includes >> #{@keyword}" if detected_text.include? @keyword
         end
       end
     else
       puts err
     end
   end
-else
-  puts "You need to provide a image file"
-  puts "For example: "
-  puts "ruby main.ruby test.png"
 end
