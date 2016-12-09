@@ -17,6 +17,17 @@ vision.key = ENV['GOOGLE_PRIVATE_KEY']
 @filename = ARGV[0]
 @keyword = ARGV[1]
 
+# Set colors for output
+class String
+  def colorize(color_code)
+    "\e[#{color_code}m#{self}\e[0m"
+  end
+
+  def blue
+    colorize(36)
+  end
+end
+
 # Check if filename argument provided
 def filename_exist?
   if @filename
@@ -55,9 +66,11 @@ if filename_exist?
     unless err then
       result.responses.each do | res |
         detected_text = res.text_annotations[0].description
-        puts "\nText detected in #{@filename} :"
+        locale = res.text_annotations[0].locale
+        puts "\nDetected Language : #{locale}".blue
+        puts "\nText detected in #{@filename} :".blue
         puts detected_text
-        puts "\nTotal text count = #{detected_text.length}"
+        puts "\nTotal text count = #{detected_text.length}".blue
         if @keyword
           puts "Text includes >> #{@keyword}" if detected_text.include? @keyword
         end
