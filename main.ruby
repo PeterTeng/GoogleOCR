@@ -4,6 +4,7 @@ require 'json'
 require 'google/apis/vision_v1'
 require 'dotenv'
 
+# Load .env
 Dotenv.load
 
 Vision = Google::Apis::VisionV1
@@ -12,9 +13,11 @@ vision = Vision::VisionService.new
 # NOTE(peter) - Please add your api key in .env file
 vision.key = ENV['GOOGLE_PRIVATE_KEY']
 
+# Get arguments from prompt
 @filename = ARGV[0]
 @keyword = ARGV[1]
 
+# Check if filename argument provided
 def filename_exist?
   if @filename
     true
@@ -26,12 +29,13 @@ def filename_exist?
   end
 end
 
+# Set request with type and filename
 def request_with_type_and_filename(type, filename)
   Google::Apis::VisionV1::BatchAnnotateImagesRequest.new(
     requests: [
       {
         image:{
-          content: File.read(@filename)
+          content: File.read(filename)
         },
         features: [
           {
